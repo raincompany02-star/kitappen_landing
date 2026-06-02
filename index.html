@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitappen — Кітаптар</title>
+  <style>
+    :root {
+      --bg:     #051610;
+      --bg2:    #071c12;
+      --card:   #0b2418;
+      --gold:   #c9a87a;
+      --gold2:  #e8cfa0;
+      --green:  #25D366;
+      --text:   #f0ebe0;
+      --muted:  #7a9e8a;
+      --border: rgba(201,168,122,0.15);
+      --r:      16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #1b5c42; border-radius: 3px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    h1,h2,h3,.hero-title,.sec-title,.footer-logo,.modal-book-title,.book-title,.combo-title,.author-name {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 16px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      width: min(1120px, calc(100% - 32px));
+      height: 64px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(7, 28, 18, 0.92);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-radius: 32px;
+      border: 1px solid rgba(201,168,122,0.15);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.25);
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 1.1rem; font-weight: 700; letter-spacing: 0.12em;
+      color: var(--gold); text-transform: uppercase;
+    }
+    .nav-logo svg { width: 30px; height: 30px; flex-shrink: 0; }
+    .nav-links { display: flex; gap: 36px; list-style: none; position: absolute; left: 50%; transform: translateX(-50%); }
+    .nav-links a {
+      font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-wa {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--green); color: #fff;
+      font-size: 0.82rem; font-weight: 600; padding: 9px 20px;
+      border-radius: 50px; min-height: 40px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .nav-wa:hover { opacity: 0.88; transform: translateY(-1px); }
+    .nav-wa svg { width: 16px; height: 16px; fill: #fff; flex-shrink: 0; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; text-align: center;
+      padding: 120px 24px 80px; position: relative; overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(27,92,66,0.5) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(201,168,122,0.05) 0%, transparent 60%),
+        var(--bg);
+    }
+    #hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: radial-gradient(rgba(201,168,122,0.1) 1px, transparent 1px);
+      background-size: 38px 38px;
+      -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 75%);
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 75%);
+    }
+    .hero-orb {
+      position: absolute; width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(27,92,66,0.2), transparent 65%);
+      border-radius: 50%; filter: blur(70px);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      animation: orbPulse 9s ease-in-out infinite; pointer-events: none;
+    }
+    @keyframes orbPulse {
+      0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.7; }
+      50%      { transform: translate(-50%,-50%) scale(1.2); opacity: 1; }
+    }
+    .hero-logo-big {
+      margin-bottom: 24px; position: relative;
+      animation: logoFloat 6s ease-in-out infinite;
+    }
+    .hero-logo-big svg {
+      width: 92px; height: 92px;
+      filter: drop-shadow(0 0 32px rgba(201,168,122,0.45));
+    }
+    @keyframes logoFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .hero-tag {
+      font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 18px;
+      position: relative; opacity: 0.85;
+    }
+    .hero-title {
+      font-size: clamp(2.6rem, 7vw, 4.6rem); font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.12; margin-bottom: 18px; position: relative;
+      color: var(--text);
+    }
+    .hero-title .g {
+      color: var(--gold);
+      background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 70%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1rem; color: var(--muted); max-width: 460px;
+      position: relative; margin-bottom: 42px; line-height: 1.7;
+    }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; position: relative; }
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--gold2), var(--gold), #9a7030);
+      background-size: 200%; color: #1a0e00;
+      font-weight: 700; font-size: 0.88rem; letter-spacing: 0.04em;
+      padding: 14px 34px; border-radius: 50px; min-height: 50px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 32px rgba(201,168,122,0.3);
+      animation: btnShine 4s ease infinite;
+    }
+    @keyframes btnShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 14px 44px rgba(201,168,122,0.45); }
+    .btn-outline {
+      display: inline-flex; align-items: center;
+      background: rgba(201,168,122,0.06);
+      border: 1px solid var(--border); color: var(--text);
+      font-size: 0.88rem; letter-spacing: 0.04em;
+      padding: 14px 34px; border-radius: 50px; min-height: 50px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,122,0.1); }
+
+    /* ── SECTION ── */
+    section { padding: 100px 40px; }
+    .sec-tag { font-size: 0.67rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 12px; opacity: 0.9; text-align: center; }
+    .sec-title { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; text-align: center; }
+    .sec-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 54px; max-width: 480px; line-height: 1.7; text-align: center; margin-left: auto; margin-right: auto; }
+    .divider { width: 40px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); border-radius: 2px; margin: 0 auto 20px; }
+    .sec-inner { max-width: 1120px; margin: 0 auto; }
+
+    /* ── CATALOG ── */
+    #catalog {
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      border-top: 1px solid var(--border); position: relative;
+    }
+    #catalog::before {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .books-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 22px; }
+    .book-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      transform: translate3d(0,0,0);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      position: relative;
+    }
+    .book-card::after {
+      content: ''; position: absolute; inset: 0; border-radius: var(--r);
+      background: linear-gradient(135deg, rgba(201,168,122,0.04) 0%, transparent 60%);
+      pointer-events: none; opacity: 0; transition: opacity 0.3s;
+    }
+    .book-card:hover { transform: translate3d(0,-7px,0); box-shadow: 0 22px 55px rgba(5,22,16,0.8), 0 0 30px rgba(201,168,122,0.07); border-color: rgba(201,168,122,0.35); }
+    .book-card:hover::after { opacity: 1; }
+    .book-cover {
+      width: 100%; height: 220px;
+      background: linear-gradient(145deg, #0d3a24, #051808);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .book-cover::before {
+      content: 'K'; position: absolute;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; font-size: 130px; font-weight: 800; font-style: italic;
+      color: rgba(201,168,122,0.07); right: -10px; bottom: -22px; line-height: 1; pointer-events: none;
+    }
+    .book-cover img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
+    .book-cover-icon { font-size: 3rem; opacity: 0.28; position: relative; z-index: 1; }
+    .book-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      background: linear-gradient(135deg, var(--gold2), var(--gold));
+      color: #1a0e00; font-size: 0.64rem; font-weight: 700;
+      padding: 3px 12px; border-radius: 50px; letter-spacing: 0.06em;
+    }
+    .book-badge.red { background: linear-gradient(135deg, #ff6b6b, #e73152); color: #fff; }
+    .book-body { padding: 20px; }
+    .book-author { font-size: 0.67rem; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 7px; opacity: 0.9; }
+    .book-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+    .book-price { font-size: 1.15rem; font-weight: 700; color: var(--gold); margin-bottom: 16px; }
+    .book-price span { font-size: 0.78rem; color: var(--muted); font-weight: 400; }
+    .btn-mazm {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; background: rgba(201,168,122,0.07);
+      border: 1px solid rgba(201,168,122,0.2); color: var(--gold);
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;
+      padding: 10px; border-radius: 10px; min-height: 42px;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      font-family: inherit;
+    }
+    .btn-mazm:hover { background: rgba(201,168,122,0.14); border-color: rgba(201,168,122,0.4); transform: translateY(-1px); }
+    .btn-mazm svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: linear-gradient(145deg, #0f2e1e, var(--card));
+      border: 1px solid rgba(201,168,122,0.22); border-radius: 22px;
+      max-width: 490px; width: 100%; max-height: 82vh; overflow-y: auto;
+      padding: 36px; position: relative;
+      animation: modalIn 0.25s ease;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,122,0.08);
+    }
+    @keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(14px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 34px; height: 34px; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 50%;
+      color: var(--muted); font-size: 1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+    .modal-book-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+    .modal-author { font-size: 0.76rem; color: var(--gold); margin-bottom: 18px; letter-spacing: 0.06em; }
+    .modal-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.75; margin-bottom: 20px; white-space: pre-line; }
+    .modal-desc strong { color: var(--text); font-weight: 600; }
+    .modal-mazm-list { list-style: none; }
+    .modal-mazm-list li {
+      display: flex; align-items: baseline; gap: 12px;
+      padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.88rem; color: var(--muted); transition: color 0.15s;
+    }
+    .modal-mazm-list li:last-child { border-bottom: none; }
+    .modal-mazm-list li:hover { color: var(--text); }
+    .modal-mazm-num { color: var(--gold); font-weight: 700; font-size: 0.7rem; min-width: 24px; opacity: 0.75; }
+    .modal-wa {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; background: var(--green); color: #fff;
+      font-weight: 700; font-size: 0.9rem; padding: 15px; border-radius: 50px;
+      border: none; cursor: pointer; margin-top: 26px; min-height: 50px;
+      font-family: inherit; transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.25);
+    }
+    .modal-wa:hover { opacity: 0.88; transform: translateY(-1px); }
+    .modal-wa svg { width: 20px; height: 20px; fill: #fff; }
+
+    /* ── COMBO ── */
+    #combo { background: var(--bg); border-top: 1px solid var(--border); position: relative; }
+    #combo::before {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 200px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .combo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .combo-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 28px 24px;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      transform: translate3d(0,0,0); position: relative; overflow: hidden;
+    }
+    .combo-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,122,0.4), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .combo-card:hover { transform: translate3d(0,-5px,0); box-shadow: 0 18px 50px rgba(5,22,16,0.75), 0 0 28px rgba(201,168,122,0.06); border-color: rgba(201,168,122,0.3); }
+    .combo-card:hover::after { opacity: 1; }
+    .combo-card.featured { border-color: rgba(201,168,122,0.4); background: linear-gradient(145deg, #112e1e, var(--card)); box-shadow: 0 4px 30px rgba(201,168,122,0.07); }
+    .combo-card.featured::before {
+      content: 'Танымал'; position: absolute; top: 0; right: 0;
+      background: linear-gradient(135deg, var(--gold2), var(--gold));
+      color: #1a0e00; font-size: 0.64rem; font-weight: 700;
+      letter-spacing: 0.06em; padding: 5px 16px;
+      border-radius: 0 var(--r) 0 var(--r);
+    }
+    .combo-card-img {
+      width: calc(100% + 48px); margin-left: -24px; margin-top: -28px;
+      margin-bottom: 20px; border-radius: var(--r) var(--r) 0 0; overflow: hidden;
+    }
+    .combo-card-img img { width: 100%; height: auto; display: block; }
+    .combo-num { font-size: 0.66rem; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; opacity: 0.85; }
+    .combo-title { font-size: 1rem; font-weight: 700; margin-bottom: 7px; line-height: 1.3; }
+    .combo-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
+    .combo-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+    .combo-price { font-size: 1.3rem; font-weight: 800; color: var(--gold); }
+    .combo-old-price { font-size: 0.82rem; color: var(--muted); text-decoration: line-through; opacity: 0.65; }
+    .combo-save { font-size: 0.67rem; background: rgba(37,211,102,0.1); color: #4ade80; padding: 3px 10px; border-radius: 50px; font-weight: 700; letter-spacing: 0.04em; }
+    .btn-combo {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      width: 100%; background: var(--green); color: #fff;
+      font-weight: 700; font-size: 0.86rem; padding: 13px; border-radius: 50px;
+      border: none; cursor: pointer; min-height: 46px; font-family: inherit;
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.2);
+    }
+    .btn-combo:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37,211,102,0.3); }
+    .btn-combo svg { width: 18px; height: 18px; fill: #fff; }
+
+    /* ── ABOUT ── */
+    #about { background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); border-top: 1px solid var(--border); }
+    .authors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .author-initials {
+      display: flex; align-items: center; justify-content: center; height: 100%;
+      font-size: 3.5rem; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--gold); opacity: 0.35; letter-spacing: 0.05em;
+    }
+    .author-card {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: 36px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 20px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .author-card:hover { border-color: rgba(201,168,122,0.3); box-shadow: 0 18px 50px rgba(5,22,16,0.6); }
+    .author-photo {
+      width: 80%; aspect-ratio: 1 / 1; border-radius: 14px;
+      background: linear-gradient(145deg, #163d28, #0a2018);
+      border: 1px solid var(--border); margin-bottom: 22px;
+      display: flex; align-items: center; justify-content: center; font-size: 4rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      overflow: hidden; transition: box-shadow 0.3s;
+    }
+    .author-card:hover .author-photo { box-shadow: 0 12px 40px rgba(201,168,122,0.15); }
+    .author-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .author-name { font-size: 1.22rem; font-weight: 700; margin-bottom: 4px; }
+    .author-role { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 18px; opacity: 0.85; }
+    .author-bio { color: var(--muted); font-size: 0.88rem; line-height: 1.8; text-align: left; }
+    .author-quote {
+      margin-top: 16px; padding: 18px 22px; width: 100%;
+      background: rgba(201,168,122,0.06);
+      border: 1px solid rgba(201,168,122,0.15); border-radius: 12px;
+      font-style: italic; font-size: 0.88rem; color: var(--text); line-height: 1.7; opacity: 0.9;
+      text-align: center;
+    }
+    .author-bio-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; background: rgba(201,168,122,0.07);
+      border: 1px solid rgba(201,168,122,0.2); color: var(--gold);
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;
+      padding: 11px 16px; border-radius: 10px; margin-top: 18px;
+      cursor: pointer; font-family: inherit;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .author-bio-toggle:hover { background: rgba(201,168,122,0.13); border-color: rgba(201,168,122,0.4); }
+    .author-bio-toggle svg { width: 16px; height: 16px; transition: transform 0.3s; flex-shrink: 0; }
+    .author-bio-toggle.open svg { transform: rotate(180deg); }
+    .author-bio-panel { display: none; padding-top: 18px; width: 100%; }
+    .author-bio-panel.open { display: block; }
+    .author-bio { color: var(--muted); font-size: 0.88rem; line-height: 1.8; text-align: left; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 64px 40px; text-align: center;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--bg2) 0%, #030e08 100%);
+      position: relative;
+    }
+    footer::before {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 320px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .footer-logo { font-size: 1.6rem; font-weight: 800; letter-spacing: 0.14em; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; }
+    .footer-sub { color: var(--muted); font-size: 0.84rem; margin-bottom: 32px; letter-spacing: 0.02em; }
+    .footer-wa {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green); color: #fff;
+      font-weight: 700; font-size: 0.9rem; padding: 15px 38px;
+      border-radius: 50px; transition: opacity 0.2s, transform 0.2s; min-height: 50px;
+      box-shadow: 0 6px 28px rgba(37,211,102,0.25);
+    }
+    .footer-wa:hover { opacity: 0.88; transform: translateY(-2px); }
+    .footer-wa svg { width: 20px; height: 20px; fill: #fff; }
+    .footer-copy { color: var(--muted); font-size: 0.74rem; margin-top: 36px; opacity: 0.55; letter-spacing: 0.04em; }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translate3d(0, 32px, 0); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translate3d(0, 0, 0); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 960px) {
+      .books-grid { grid-template-columns: repeat(2,1fr); }
+      .combo-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      section { padding: 72px 24px; }
+      .authors-grid { grid-template-columns: 1fr; gap: 20px; }
+      .author-card { padding: 28px; }
+      .hero-title { font-size: 2.6rem; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 0 18px; }
+      nav .nav-links { display: none; }
+      section { padding: 64px 20px; }
+      #hero { min-height: 90vh; padding: 88px 20px 48px; }
+      .hero-title { font-size: 2rem; }
+      .hero-logo-big { margin-bottom: 12px; }
+      .hero-logo-big svg { width: 56px; height: 56px; }
+      .hero-tag { margin-bottom: 10px; }
+      .hero-btns { gap: 10px; }
+      .books-grid { grid-template-columns: repeat(2,1fr); gap: 12px; }
+      .combo-grid {
+        display: flex; flex-direction: row;
+        overflow-x: auto; scroll-snap-type: x mandatory;
+        gap: 14px; padding: 4px 0 16px;
+        scrollbar-width: none; -ms-overflow-style: none;
+      }
+      .combo-grid::-webkit-scrollbar { display: none; }
+      .combo-grid .combo-card {
+        flex: 0 0 82%; scroll-snap-align: center;
+      }
+      #combo .sec-inner { overflow: hidden; }
+      .authors-grid { grid-template-columns: 1fr; gap: 20px; }
+      .author-card { padding: 24px; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-gold, .btn-outline { width: 100%; max-width: 280px; justify-content: center; }
+    }
+    /* ── MARQUEE ── */
+    .books-marquee {
+      width: 100%; overflow-x: scroll; overflow-y: hidden;
+      margin-bottom: 48px; cursor: grab; touch-action: pan-x;
+      mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .books-marquee::-webkit-scrollbar { display: none; }
+    .books-marquee:active { cursor: grabbing; }
+    .marquee-track { display: inline-flex; gap: 16px; }
+    .marquee-card { flex: 0 0 auto; width: 160px; height: 220px; border-radius: 18px; overflow: hidden; position: relative; transform: perspective(800px) rotateY(-5deg); transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.3s; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+    .marquee-card:hover { transform: perspective(800px) rotateY(0deg) scale(1.08); box-shadow: 0 16px 48px rgba(0,0,0,0.55); z-index: 2; }
+    .marquee-card img { width: 100%; height: 100%; object-fit: cover; display: block; background: #0b2418; }
+    .marquee-badge { position: absolute; bottom: 12px; left: 10px; background: rgba(255,255,255,0.95); color: #0b2418; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 50px; letter-spacing: 0.04em; backdrop-filter: blur(8px); white-space: nowrap; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+    .marquee-badge.badge-gold { background: linear-gradient(135deg, #e8cfa0, #c9a87a); color: #1a0e00; }
+    .marquee-badge.badge-red { background: linear-gradient(135deg, #ff6b6b, #e73152); color: #fff; }
+    /* ── FLOATING NAV INDICATOR ── */
+    .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); opacity: 0.6; display: inline-block; margin-left: 4px; vertical-align: middle; animation: navPulse 2s ease-in-out infinite; }
+    @keyframes navPulse { 0%,100% { opacity:0.4; transform:scale(1); } 50% { opacity:1; transform:scale(1.3); } }
+    /* ── HERO restyle ── */
+    #hero { padding-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+    @media (max-width: 600px) {
+      .marquee-card { width: 110px; height: 154px; border-radius: 14px; }
+      .books-marquee { margin-bottom: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ NAV ═══ -->
+  <nav>
+    <span class="nav-logo">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="2" y="38" font-family="Georgia,serif" font-size="38" font-weight="bold" fill="#c9a87a" font-style="italic">K</text>
+        <line x1="6" y1="42" x2="22" y2="48" stroke="#c9a87a" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="22" y1="48" x2="26" y2="43" stroke="#c9a87a" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="22" y1="48" x2="18" y2="43" stroke="#c9a87a" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      Kitappen
+    </span>
+    <ul class="nav-links">
+      <li><a href="#catalog">Каталог</a></li>
+      <li><a href="#combo">Комбо</a></li>
+      <li><a href="#about">Автор туралы</a></li>
+    </ul>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section id="hero">
+    <div class="hero-orb"></div>
+    <div class="hero-logo-big reveal">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="4" y="82" font-family="Georgia,serif" font-size="82" font-weight="bold" fill="#c9a87a" font-style="italic" opacity="0.95">K</text>
+        <line x1="12" y1="88" x2="46" y2="100" stroke="#c9a87a" stroke-width="4" stroke-linecap="round"/>
+        <line x1="46" y1="100" x2="55" y2="90" stroke="#c9a87a" stroke-width="3" stroke-linecap="round"/>
+        <line x1="46" y1="100" x2="37" y2="90" stroke="#c9a87a" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="books-marquee">
+  <div class="marquee-track">
+    <div class="marquee-card"><img src="photos/book-islam.jpg" alt="Ислам Тарихы"><span class="marquee-badge">Бестселлер</span></div>
+    <div class="marquee-card"><img src="photos/book-hadis.jpg" alt="Хадис Ілімі"><span class="marquee-badge badge-gold">Хадистану</span></div>
+    <div class="marquee-card"><img src="photos/book-hukuk.jpg" alt="Адам Құқықтары"></div>
+    <div class="marquee-card"><img src="photos/book-abai.jpg" alt="Абай"><span class="marquee-badge">Абайтану</span></div>
+    <div class="marquee-card"><img src="photos/book-quran.png" alt="Құран Ілімдеріне Кіріспе"></div>
+    <div class="marquee-card"><img src="photos/book-jihad.png" alt="Жиһад"><span class="marquee-badge badge-red">Жаңа</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-card"><img src="photos/book-islam.jpg" alt="Ислам Тарихы"><span class="marquee-badge">Бестселлер</span></div>
+    <div class="marquee-card"><img src="photos/book-hadis.jpg" alt="Хадис Ілімі"><span class="marquee-badge badge-gold">Хадистану</span></div>
+    <div class="marquee-card"><img src="photos/book-hukuk.jpg" alt="Адам Құқықтары"></div>
+    <div class="marquee-card"><img src="photos/book-abai.jpg" alt="Абай"><span class="marquee-badge">Абайтану</span></div>
+    <div class="marquee-card"><img src="photos/book-quran.png" alt="Құран Ілімдеріне Кіріспе"></div>
+    <div class="marquee-card"><img src="photos/book-jihad.png" alt="Жиһад"><span class="marquee-badge badge-red">Жаңа</span></div>
+  </div>
+</div>
+    <p class="hero-tag reveal">Қ. Құрманбаев</p>
+    <h1 class="hero-title reveal">«Оқы!» — деп бұйырылған<br><span class="g">үмметке арналған кітаптар</span></h1>
+    <div class="hero-btns reveal">
+      <a href="#catalog" class="btn-gold">Каталогты қарау</a>
+      <a href="#combo" class="btn-outline">Комбо бағасы</a>
+      <a href="#about" class="btn-outline">Автор туралы</a>
+    </div>
+  </section>
+
+  <!-- ═══ КІТАПТАР КАТАЛОГЫ ═══ -->
+  <section id="catalog">
+    <div class="sec-inner">
+      <p class="sec-tag reveal">Шығармалар</p>
+      <div class="divider reveal"></div>
+      <h2 class="sec-title reveal">Кітаптар каталогы</h2>
+      <p class="sec-sub reveal">Әр кітаптың мазмұнын көруге болады</p>
+
+      <div class="books-grid">
+
+        <!-- Кітап 1 — Ислам Тарихы -->
+        <div class="book-card reveal">
+          <div class="book-cover">
+            <img src="photos/book-islam.jpg" alt="Ислам Тарихы">
+            <span class="book-badge">Бестселлер</span>
+          </div>
+          <div class="book-body">
+            <p class="book-author">Қ. Құрманбаев</p>
+            <h3 class="book-title">Ислам Тарихы</h3>
+            <p class="book-price">5 000 ₸ <span>/ дана</span></p>
+            <button class="btn-mazm" onclick="openModal('islam')">
+              <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Мазмұнға өту
+            </button>
+          </div>
+        </div>
+
+        <!-- Кітап 2 — Хадис -->
+        <div class="book-card reveal">
+          <div class="book-cover">
+            <img src="photos/book-hadis.jpg" alt="Хадис Ілімі">
+          </div>
+          <div class="book-body">
+            <p class="book-author">Қ. Құрманбаев</p>
+            <h3 class="book-title">Хадис</h3>
+            <p class="book-price">6 000 ₸ <span>/ дана</span></p>
+            <button class="btn-mazm" onclick="openModal('hadis')">
+              <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Мазмұнға өту
+            </button>
+          </div>
+        </div>
+
+        <!-- Кітап 3 — Құқық -->
+        <div class="book-card reveal">
+          <div class="book-cover">
+            <img src="photos/book-hukuk.jpg" alt="Құқық">
+          </div>
+          <div class="book-body">
+            <p class="book-author">Қ. Құрманбаев</p>
+            <h3 class="book-title">Исламдағы адам құқықтары</h3>
+            <p class="book-price">7 000 ₸ <span>/ дана</span></p>
+            <button class="btn-mazm" onclick="openModal('hukuk')">
+              <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Мазмұнға өту
+            </button>
+          </div>
+        </div>
+
+        <!-- Кітап 4 — Абай -->
+        <div class="book-card reveal">
+          <div class="book-cover">
+            <img src="photos/book-abai.jpg" alt="Абай">
+          </div>
+          <div class="book-body">
+            <p class="book-author">Қ. Құрманбаев</p>
+            <h3 class="book-title">Абай</h3>
+            <p class="book-price">6 000 ₸ <span>/ дана</span></p>
+            <button class="btn-mazm" onclick="openModal('abai')">
+              <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Мазмұнға өту
+            </button>
+          </div>
+        </div>
+
+        <!-- Кітап 5 — Құран ілімдеріне кіріспе -->
+        <div class="book-card reveal">
+          <div class="book-cover">
+            <img src="photos/book-quran.png" alt="Құран ілімдеріне кіріспе">
+            <span class="book-badge">9-басылымы</span>
+          </div>
+          <div class="book-body">
+            <p class="book-author">Қ. Құрманбаев</p>
+            <h3 class="book-title">Құран ілімдеріне кіріспе</h3>
+            <p class="book-price"><span>Бағасын сұраңыз</span></p>
+            <button class="btn-mazm" onclick="openModal('quran')">
+              <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Мазмұнға өту
+            </button>
+          </div>
+        </div>
+
+        <!-- Кітап 6 — Жиһад -->
+        <div class="book-card reveal">
+          <div class="book-cover">
+            <img src="photos/book-jihad.png" alt="Жиһад">
+            <span class="book-badge red">Жаңа</span>
+          </div>
+          <div class="book-body">
+            <p class="book-author">Қ. Құрманбаев · Н. Стамбакиев</p>
+            <h3 class="book-title">Жиһад</h3>
+            <p class="book-price"><span>Бағасын сұраңыз</span></p>
+            <button class="btn-mazm" onclick="openModal('jihad')">
+              <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Мазмұнға өту
+            </button>
+          </div>
+        </div>
+
+        <!-- Кітап 7 — Сөзбе-сөз аударылған 500 хадис -->
+        <div class="book-card reveal">
+          <div class="book-cover">
+          </div>
+          <div class="book-body">
+            <p class="book-author">Б. Жұмабекұлы</p>
+            <h3 class="book-title">Сөзбе-сөз аударылған 500 хадис</h3>
+            <p class="book-price"><span>Бағасын сұраңыз</span></p>
+            <button class="btn-mazm" onclick="openModal('hadis500')">
+              <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Мазмұнға өту
+            </button>
+          </div>
+        </div>
+
+        <!-- Кітап 8 — Пайғамбар жыры -->
+        <div class="book-card reveal">
+          <div class="book-cover">
+          </div>
+          <div class="book-body">
+            <p class="book-author">Ә. Сарин</p>
+            <h3 class="book-title">Пайғамбар жыры</h3>
+            <p class="book-price"><span>Бағасын сұраңыз</span></p>
+            <button class="btn-mazm" onclick="openModal('paygar')">
+              <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Мазмұнға өту
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ КОМБО ═══ -->
+  <section id="combo">
+    <div class="sec-inner">
+      <p class="sec-tag reveal">Жинақтар</p>
+      <div class="divider reveal"></div>
+      <h2 class="sec-title reveal">Комбо жиынтықтары</h2>
+      <p class="sec-sub reveal">Бірге алсаң — үнемдейсің</p>
+
+      <div class="combo-grid">
+
+        <!-- Комбо 1 -->
+        <div class="combo-card reveal">
+          <div class="combo-card-img">
+            <img src="photos/combo-1.jpg" alt="Комбо 1 — Ислам Білімінің Базалық Пакеті">
+          </div>
+          <p class="combo-num">Комбо 1</p>
+          <h3 class="combo-title">Ислам Білімінің Базалық Пакеті</h3>
+          <p class="combo-desc">4 кітап жинағы: Хадис + Ислам Тарихы + Жиһад + Құран</p>
+          <div class="combo-price-row">
+            <span class="combo-price">11 500 ₸</span>
+            <span class="combo-old-price">18 850 ₸</span>
+            <span class="combo-save">-39%</span>
+          </div>
+          <button class="btn-combo" onclick="orderCombo('Комбо 1 — Ислам Білімінің Базалық Пакеті (4 кітап) — 11 500 ₸')">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Тапсырыс беру
+          </button>
+        </div>
+
+        <!-- Комбо 2 -->
+        <div class="combo-card featured reveal">
+          <div class="combo-card-img">
+            <img src="photos/combo-2.jpg" alt="Комбо 2">
+          </div>
+          <p class="combo-num">Комбо 2</p>
+          <h3 class="combo-title">Хадис + Адам Құқықтары + Намаз + Құран</h3>
+          <p class="combo-desc">4 кітап жинағы</p>
+          <div class="combo-price-row">
+            <span class="combo-price">10 900 ₸</span>
+            <span class="combo-old-price">15 850 ₸</span>
+            <span class="combo-save">-31%</span>
+          </div>
+          <button class="btn-combo" onclick="orderCombo('Комбо 2 — 4 кітап жинағы — 10 900 ₸')">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Тапсырыс беру
+          </button>
+        </div>
+
+        <!-- Комбо 3 -->
+        <div class="combo-card reveal">
+          <div class="combo-card-img">
+            <img src="photos/combo-3.jpg" alt="Комбо 3 — Толық жинақ">
+          </div>
+          <p class="combo-num">Комбо 3</p>
+          <h3 class="combo-title">Толық жинақ (5 кітап)</h3>
+          <p class="combo-desc">Хадис + Адам Құқықтары + Құран + Ислам Тарихы + Жиһад</p>
+          <div class="combo-price-row">
+            <span class="combo-price">12 900 ₸</span>
+            <span class="combo-old-price">20 800 ₸</span>
+            <span class="combo-save">-38%</span>
+          </div>
+          <button class="btn-combo" onclick="orderCombo('Комбо 3 — Толық жинақ (5 кітап) — 12 900 ₸')">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Тапсырыс беру
+          </button>
+        </div>
+
+        <!-- Комбо 4 -->
+        <div class="combo-card reveal">
+          <div class="combo-card-img">
+            <img src="photos/combo-4.jpg" alt="Комбо 4 — Хадис + Құран">
+          </div>
+          <p class="combo-num">Комбо 4</p>
+          <h3 class="combo-title">Хадис + Құран</h3>
+          <p class="combo-desc">2 кітап жинағы</p>
+          <div class="combo-price-row">
+            <span class="combo-price">9 990 ₸</span>
+            <span class="combo-old-price">11 900 ₸</span>
+            <span class="combo-save">-16%</span>
+          </div>
+          <button class="btn-combo" onclick="orderCombo('Комбо 4 — Хадис + Құран (2 кітап) — 9 990 ₸')">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Тапсырыс беру
+          </button>
+        </div>
+
+        <!-- Комбо 5 -->
+        <div class="combo-card reveal">
+          <div class="combo-card-img">
+            <img src="photos/combo-5.jpg" alt="Комбо 5 — Ислам Тарихы + Құран">
+          </div>
+          <p class="combo-num">Комбо 5</p>
+          <h3 class="combo-title">Ислам Тарихы + Құран</h3>
+          <p class="combo-desc">2 кітап жинағы</p>
+          <div class="combo-price-row">
+            <span class="combo-price">8 500 ₸</span>
+            <span class="combo-old-price">10 900 ₸</span>
+            <span class="combo-save">-22%</span>
+          </div>
+          <button class="btn-combo" onclick="orderCombo('Комбо 5 — Ислам Тарихы + Құран (2 кітап) — 8 500 ₸')">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Тапсырыс беру
+          </button>
+        </div>
+
+        <!-- Комбо 6 -->
+        <div class="combo-card reveal">
+          <div class="combo-card-img">
+            <img src="photos/combo-6.jpg" alt="Комбо 6 — Ислам Тарихы + Адам Құқықтары">
+          </div>
+          <p class="combo-num">Комбо 6</p>
+          <h3 class="combo-title">Ислам Тарихы + Адам Құқықтары</h3>
+          <p class="combo-desc">2 кітап жинағы</p>
+          <div class="combo-price-row">
+            <span class="combo-price">6 900 ₸</span>
+            <span class="combo-old-price">8 900 ₸</span>
+            <span class="combo-save">-22%</span>
+          </div>
+          <button class="btn-combo" onclick="orderCombo('Комбо 6 — Ислам Тарихы + Адам Құқықтары (2 кітап) — 6 900 ₸')">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Тапсырыс беру
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ АВТОР ТУРАЛЫ ═══ -->
+  <section id="about">
+    <div class="sec-inner">
+      <p class="sec-tag reveal">Автор туралы</p>
+      <div class="divider reveal"></div>
+      <h2 class="sec-title reveal">Автор туралы</h2>
+
+      <div class="authors-grid">
+
+        <!-- Автор -->
+        <div class="author-card reveal">
+          <div class="author-photo">
+            <img src="photos/author-qairat.jpg" alt="Қайрат Құрманбаев" style="object-position: center 20%;">
+          </div>
+          <h3 class="author-name">Қайрат Құрманбайұлы Құрманбаев</h3>
+          <p class="author-role">Исламтанушы ғалым · Философия докторы (PhD) · «Құрмет» орденінің иегері</p>
+          <button class="author-bio-toggle" onclick="toggleBio(this)">
+            <span class="bio-toggle-text">Толығырақ ақпарат</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="author-bio-panel">
+            <p class="author-bio">Қазақстан тарихында исламтану бойынша тұңғыш PhD докторлық дәрежесін қорғаған отандық маман (1976 ж., Ақтөбе облысы). Ливия мен Египеттің, Қазақстанның жетекші университеттерінде жоғары діни және ғылыми білім алды. «Нұр-Мүбарак» Египет ислам мәдениеті университетінің Академиялық мәселелер жөніндегі проректоры (2018–2024), ҚМДБ Ғұламалар кеңесінің тұрақты мүшесі, Қазақстан Дінтанушылар конгресінің төрағасы. Хадистану, ислам әдебі және діни радикализмнің алдын алу бағытында 10-нан астам монография мен 50-ден астам халықаралық ғылыми мақаланың авторы.</p>
+            <div class="author-quote">"Ислам ілімі тек діни парыз емес — ол жан азығы, ақыл-ой нәрі және қоғамдық тұрақтылықтың іргетасы."</div>
+          </div>
+        </div>
+
+        <!-- Автор 2 -->
+        <div class="author-card reveal">
+          <div class="author-photo">
+            <img src="photos/author-bekbolat.jpg" alt="Бекболат Жұмабек">
+          </div>
+          <h3 class="author-name">Бекболат Жұмабекұлы Жұмабек</h3>
+          <p class="author-role">Исламтанушы · Магистр · «Нұр-Мүбарак» университетінің оқытушысы</p>
+          <button class="author-bio-toggle" onclick="toggleBio(this)">
+            <span class="bio-toggle-text">Толығырақ ақпарат</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="author-bio-panel">
+            <p class="author-bio">Қазақстандық исламтанушы, білікті ұстаз (1993 ж., Ақтөбе облысы, Ырғыз ауданы). «Нұр-Мүбарак» Египет ислам мәдениеті университетінде бакалавриат пен магистратурасын «Исламтану» мамандығы бойынша тәмамдап, Түркияда (Конья) кәсіби тағылымдамадан өткен. Ақтөбе облысы мешіттерінде наиб имам, медреселерде ұстаз ретінде еңбек етіп, «Аңсар» орталығы жанындағы деструктивті ағымдарға қарсы қорда директор қызметін атқарған. Қазіргі уақытта Алматыдағы «Нұр-Мүбарак» университетінің негізгі кафедрасында ұстаздық жасайды.</p>
+            <div class="author-quote">"Ілімді іздеу — әрбір мұсылманға парыз."</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <p class="footer-logo">Kitappen</p>
+    <p class="footer-copy">© 2026 1K Kitappen. Барлық құқықтар қорғалған.</p>
+  </footer>
+
+  <!-- ═══ МАЗМҰН МОДАЛІ ═══ -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal" id="modalBox">
+      <button class="modal-close" onclick="closeModalDirect()" aria-label="Жабу">✕</button>
+      <h3 class="modal-book-title" id="modalTitle">—</h3>
+      <p class="modal-author" id="modalAuthor">—</p>
+      <p class="modal-desc" id="modalDesc" style="display:none"></p>
+      <ul class="modal-mazm-list" id="modalList"></ul>
+      <button class="modal-wa" id="modalWaBtn">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Осы кітапқа тапсырыс беру
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ── Бот қорғанысы ──
+    function _d(a,k){return a.map((c,i)=>String.fromCharCode(c^k.charCodeAt(i%k.length))).join('');}
+    const _w = _d([92,94,68,84,89,65,93,93,94,90,76],'kitappen');
+    let _btnTs = 0;
+    function _ok(){return Date.now()-_btnTs>2000;}
+
+    // ── Кітап мазмұндары ──
+    const books = {
+      islam: {
+        title: 'Ислам тарихы (Әділетті бес халифа кезеңі)',
+        author: 'Қ. Құрманбаев, Е. Есімқұлов · 5 000 ₸',
+        order: 'Ислам Тарихы кітабына тапсырыс беремін — 5 000 ₸',
+        desc: 'Мұхаммед пайғамбардың (с.а.с.) дүниеден өтуімен Ислам үмбеті үшін ең жауапты әрі күрделі кезең басталды. Бұл іргелі еңбек оқырманды хижраның 11-40 (632-661) жылдары аралығындағы мұсылман үмбетінің ең даңқты әрі сынаққа толы алтын ғасырына жетелейді.\n\nБұл кітап — Пайғамбарымыздың (с.а.с.) ең жақын серіктері болған Әбу Бәкір, Омар, Осман, Әли және Хасан ибн Әлидің (р.а.) басқару жүйесін, олардың тұлғалық қасиеттерін, мемлекеттің ішкі-сыртқы саясаты мен әділдік принциптерін жан-жақты зерттейтін шынайы тарих шежіресі. Ислам мемлекетінің қалай кеңейгенін, алғашқы халифа таңдау сәтіндегі саяси шешімдерді, бүлікшілермен және діннен безгендермен (ридда) күресті, сондай-ақ мұсылмандар арасындағы алғашқы ішкі іріткілерді (Жамал, Сыффин соғыстары, Харижилердің шығуы) ешбір бұрмалаусыз, шынайы тарихи деректермен баяндайды.\n\nТарих ғылымдарының докторлары мен Қазақстан мұсылмандары діни басқармасының жоғары бағасына ие болған басылым.',
+        chapters: [
+          'Исламның шынайы мемлекеттік басқару жүйесін таниды: Әбу Бәкір, Омар, Осман, Әли, Хасан (р.а.) даналығы',
+          'Тарихи оқиғаларға объективті көзқарас: Сыффин, Жамал оқиғаларының шынайы себептері',
+          'Радикалды топтар мен харижилердің тарихи тамырын түсінеді',
+          'Тұлғалық даму: бес халифаның мінез-құлқынан үлгі алады',
+          'Бірлік пен татулықтың қадірін — тарихи мысалдармен ұғынады',
+        ]
+      },
+      hadis: {
+        title: 'Хадис ілімі (тарихы және әдіснамасы)',
+        author: 'Қ. Құрманбаев · 6 000 ₸',
+        order: 'Хадис ілімі кітабына тапсырыс беремін — 6 000 ₸',
+        desc: 'Адамзат тарихындағы ең қатал «Детектор лжи»: Көпшілік біле бермейтін 1400 жылдық құпия код.\n\nСіз адамзат тарихындағы ең мінсіз, ең қатал және ең заманауи ақпаратты тексеру (фактчекинг) жүйесі осыдан 14 ғасыр бұрын ислам әлемінде құрылғанын білесіз бе?\n\nБүгінгі криминалистер мен халықаралық барлау қызметтері қолданатын адам тану, мінезді зерттеу және сөйлеу психологиясының негіздері сонау VII–IX ғасырларда-ақ хадис ілімінің арқасында шыңына жеткен еді.',
+        chapters: [
+          'Саяси интригалар және алғашқы «фейктердің» пайда болуы',
+          'Жеткізушілер соты: «Жарх және тағдил» жұмбағы',
+          'Алтын алтылық: кемелдікке жеткен кезең',
+          'Құпия терминдер коды: «мутауатир», «ахад», «маудуғ»',
+        ]
+      },
+      hukuk: {
+        title: 'Исламдағы адам құқықтары',
+        author: 'Қайрат Құрманбаев · 7 000 ₸',
+        order: 'Исламдағы адам құқықтары кітабына тапсырыс беремін — 7 000 ₸',
+        desc: '«Адам құқығы» Батыстың өнертабысы ма, әлде исламның 14 ғасыр бұрынғы басты құндылығы ма?\n\nБатыс әлемі бұл құқықтарға тек қанды революциялар арқылы ХХ ғасырда ғана қол жеткізсе, Ислам діні бұдан 1400 жыл бұрын адамзатқа қандай төңкеріс әкелді?\n\nБұл кітапты оқығанда сіз мынадай сұрақтардың жауабын табасыз:\n• Хамурапи заңдарынан бастап Ежелгі Мысыр мен Үндістандағы адам құқығының сиқы қандай еді?\n• Батыс мәдениеті ұсынған «адам құқықтарының» осал тұсы неде?\n• Ислам және әйел құқығы — нағыз ұстаным қандай?\n• Мұхаммед пайғамбардың (с.а.с.) Мәдина Конституциясында не жазылған?',
+        chapters: [
+          'Кіріспе. Адам құқығы — тарихи шолу',
+          'І тарау. Көне өркениеттердегі адам құқығы',
+          'ІІ тарау. Батыс жүйесі және исламның иләһи жүйесі',
+          'ІІІ тарау. Ислам және әйел құқығы',
+          'ІV тарау. Мәдина Конституциясы — әлемдегі алғашқы Ата Заң',
+          'Қорытынды',
+        ]
+      },
+      abai: {
+        title: 'Абай',
+        author: 'Ақжол Қалшабек және т.б. · 6 000 ₸',
+        order: 'Абай кітабына тапсырыс беремін — 6 000 ₸',
+        desc: 'Бұл еңбекте Абай мұрасының Мүрсейіт Бікіұлының 1905, 1907, 1910 жылғы қолжазбаларына сүйеніп жасалған транскрипциясы, сөздіктер, әртүрлі қолжазба нұсқаларындағы айырмашылықтар сараланып, беріліп отыр.\n\nҒылыми жұмыс барысында Турағұл Абайұлы, Рахым Жандыбаев, Оразке Уақбайұлы қолжазбалары және 1909 жылғы Санкт-Петербург шаһарында Кәкітай Ысқақұлы шығарған Абай шығармаларының басылымы сыни салыстырмалы тұрғыдан қатар пайдаланылды.',
+        chapters: [
+          'Транскрипция: Китәбу тасдиқ, Китәбу ъақл, Насихат',
+          'Сохрат хакимнің сөзі · Өлеңдер · Перауатлар',
+          'Ескендір әңгімесі · Масғұд қиссасы',
+          'Абайдың хаттары',
+          'Сөздік (Ақжол Қалшабек, Исатай Батыр)',
+          'Қолжазбаларды салыстыру (Ақжол Қалшабек)',
+        ]
+      },
+      quran: {
+        title: 'Құран ілімдеріне кіріспе',
+        author: 'Қ. Құрманбаев · 9-басылымы',
+        order: 'Құран ілімдеріне кіріспе кітабына тапсырыс беремін',
+        desc: 'Әлемде ең көп оқылатын, бірақ сырлары мен ғылыми тереңдігі әлі де толық ашылып бітпеген ұлы кітап бар — ол Құран Кәрім.\n\nБұл іргелі еңбек (9-басылымы) оқырманды Құранның жай ғана мәтінімен емес, оның артында тұрған орасан зор ғылым әлемімен қауыштырады. Туынды Құран ілімінің қалыптасу тарихын, аяттардың түсу себептерін (сәбабу нүзул), Меккелік және Мәдиналық сүрелердің айырмашылықтарын, сондай-ақ тәпсір ғылымы мен оның түрлерін жан-жақты, жеңіл әрі ғылыми тілде баяндап береді.\n\nҚР Дін істері комитетінің сараптамасынан өтіп, Қазақстан мұсылмандары діни басқармасы мақұлдаған еңбек.',
+        chapters: [
+          'Құранның түпнұсқалық ақиқатына көз жеткізеді: тарихи деректермен иман бекиді',
+          'Аяттардың астарын дұрыс түсінуді үйренеді: сәбабу нүзул арқылы бұрмалаудан аман болады',
+          'Жат ағымдардың адастыруынан қорғанады: тәпсір ғылымын меңгеріп, айла-шарғыны ажыратады',
+          'Сыни ойлау қалыптасады: мүтәшәбиһ, мұхкәм, нәсих пен мәнсухты ажыратады',
+          'Рухани мәдениеті артады: намаздағы сүрелердің қадірін жүрекпен ұғынады',
+        ]
+      },
+      jihad: {
+        title: 'Жиһад',
+        author: 'Қ. Құрманбаев · Н. Стамбакиев',
+        order: 'Жиһад кітабына тапсырыс беремін',
+        desc: 'Бүгінгі таңда «жиһад» десе, көз алдымызға соғыс, қару мен үрей келетіні жасырын емес. Алайда, бұл еңбек оқырманды мүлдем бөлек, бейбіт әрі терең рухани әлемге жетелейді.\n\nБұл кітап — дін атын жамылған радикалды топтардың да, исламофобияны өршітушілердің де өтірігін ғылыми негізде, бұлтартпас дәлелдермен әшкерелейтін шынайы білімнің құралы.\n\nҚР Ақпарат және қоғамдық даму министрлігі мен Қазақстан мұсылмандары діни басқармасының мақұлдауынан өткен еңбек.',
+        chapters: [
+          'Радикализмнен қорғайтын иммунитет қалыптастырады',
+          'Сыни ойлау қабілеті мен медиасауаттылығы артады',
+          'Рухани кемелдену мен өзін-өзі тәрбиелеу жолын табады',
+          'Діни мәтіндерді дұрыс түсіну мәдениеті қалыптасады',
+          'Отансүйгіштік пен толеранттылық сезімі күшейеді',
+        ]
+      },
+      hadis500: {
+        title: 'Сөзбе-сөз аударылған 500 хадис қазақша түсінігімен',
+        author: 'Бекболат Жұмабекұлы (@bekbolat_ustaz)',
+        order: 'Сөзбе-сөз аударылған 500 хадис кітабына тапсырыс беремін',
+        desc: 'Ислам дінінің Құраннан кейінгі екінші қайнар көзі — хадис ілімі. Бұл теңдессіз жинақ (2-басылымы) оқырманды Пайғамбарымыздың (с.а.с.) мәнді де мағыналы сүннет әлеміне жетелейді.\n\nЖинаққа ислам әлеміндегі ең сенімді хадис кітаптары (Бухари, Муслим, Әбу Дауд, Тирмизи және т.б.) негіз болған. Күнделікті өмірге, көркем мінезге, құлшылыққа, отбасы мен қоғамдық қарым-қатынасқа тікелей қатысты ең маңызды 500 хадис іріктеліп алынған.\n\nҚР Мәдениет және ақпарат министрлігі Дін істері комитетінің оң қорытындысын алған еңбек.',
+        chapters: [
+          'Хадистерді түпнұсқада (бұрмалаусыз) түсінуді үйренеді',
+          'Көркем мінез-құлық пен адами қасиеттерді бойына сіңіреді',
+          'Күнделікті өмірде Сүннетті жандандыруға мүмкіндік алады',
+          'Діни сауаттылығы артып, рухани тұрғыдан кемелденеді',
+          'Хадистерді жатқа айту және өзгеге жеткізу қабілеті дамиды',
+        ]
+      },
+      paygar: {
+        title: 'Пайғамбар жыры',
+        author: 'Әділбек Сарин',
+        order: 'Пайғамбар жыры кітабына тапсырыс беремін',
+        desc: 'Бұл кітапта адамзаттың асылы, пайғамбарлар сұлтаны — Мұхаммед (саллаллаһу алейһи уә сәлләм) өмірбаяны, ғұмыр кешкен дәуірі көркем жыр арқылы баяндалған.\n\nАқтөбелік жырау Әділбек Сарин «Адамзаттың асыл тәжі» кітабын негізге ала отырып, көпшілікке жыр үлгісінде ұсынып отыр.\n\nКітап барша өнерсүйер қауымға, жыршы-термешілерге, сондай-ақ, ізденуші көзіқарақты оқырманға арналған.',
+        chapters: [
+          'Пайғамбар (с.а.с.) өмірбаяны жыр үлгісінде',
+          'Мүбарак пайғамбарымызды ұлықтайтын мәуліт жырлары',
+          '«Адамзаттың асыл тәжі» негізінде жасалған шығарма',
+        ]
+      }
+    };
+
+    function openModal(key) {
+      const b = books[key];
+      document.getElementById('modalTitle').textContent = b.title;
+      document.getElementById('modalAuthor').textContent = b.author;
+      const descEl = document.getElementById('modalDesc');
+      if (b.desc) { descEl.textContent = b.desc; descEl.style.display = 'block'; }
+      else { descEl.style.display = 'none'; }
+      const list = document.getElementById('modalList');
+      list.innerHTML = b.chapters.map((ch, i) =>
+        `<li><span class="modal-mazm-num">${String(i+1).padStart(2,'0')}</span>${ch}</li>`
+      ).join('');
+      document.getElementById('modalWaBtn').onclick = () => orderCombo(b.order);
+      document.getElementById('modalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(e) {
+      if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+    }
+    function closeModalDirect() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function orderCombo(text) {
+      if (!_ok()) return;
+      _btnTs = Date.now();
+      const msg = `Сәлем! Мен тапсырыс бергім келеді:\n\n📦 ${text}\n\nАтым: —\nТелефоным: —`;
+      window.open(`https://wa.me/${_w}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // ── Scroll Reveal ──
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // ── Book card 3D tilt (десктоп) ──
+    if (window.matchMedia('(hover: hover)').matches) {
+      document.querySelectorAll('.book-card, .combo-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          card.style.transform = `perspective(900px) rotateX(${-y*5}deg) rotateY(${x*5}deg) translateY(-5px)`;
+        });
+        card.addEventListener('mouseleave', () => card.style.transform = '');
+      });
+    }
+
+    // ── Esc to close modal ──
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+    // ── Marquee: auto-scroll + touch drag ──
+    (function() {
+      const wrap = document.querySelector('.books-marquee');
+      const track = document.querySelector('.marquee-track');
+      if (!wrap || !track) return;
+      const speed = 0.8;
+      let running = true;
+      let touching = false;
+      let resumeT = null;
+
+      function tick() {
+        if (running && !touching) {
+          wrap.scrollLeft += speed;
+          if (wrap.scrollLeft >= track.scrollWidth / 2) {
+            wrap.scrollLeft -= track.scrollWidth / 2;
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+
+      wrap.addEventListener('mouseenter', () => running = false);
+      wrap.addEventListener('mouseleave', () => running = true);
+
+      function onTouchStart() { touching = true; clearTimeout(resumeT); }
+      function onTouchEnd() { resumeT = setTimeout(() => { touching = false; running = true; }, 1200); }
+
+      wrap.addEventListener('touchstart', onTouchStart, { passive: true });
+      wrap.addEventListener('touchend', onTouchEnd, { passive: true });
+      wrap.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    })();
+
+    // ── Автор биографиясын ашу/жабу ──
+    function toggleBio(btn) {
+      btn.classList.toggle('open');
+      btn.nextElementSibling.classList.toggle('open');
+      btn.querySelector('.bio-toggle-text').textContent =
+        btn.classList.contains('open') ? 'Жасыру' : 'Толығырақ ақпарат';
+    }
+  </script>
+
+</body>
+</html>
