@@ -908,9 +908,7 @@
     window.scrollTo(0, 0);
 
     // ── WhatsApp ──
-    const _w = '7705' + '9183' + '538';
-    let _btnTs = 0;
-    function _ok(){return Date.now()-_btnTs>2000;}
+    const WA = '77059183538';
 
     // ── Кітап мазмұндары ──
     const books = {
@@ -1058,10 +1056,8 @@
     }
 
     function orderCombo(text) {
-      if (!_ok()) return;
-      _btnTs = Date.now();
       const msg = `Сәлем! Мен тапсырыс бергім келеді:\n\n📦 ${text}\n\nАтым: —\nТелефоным: —`;
-      window.open(`https://wa.me/${_w}?text=${encodeURIComponent(msg)}`, '_blank');
+      window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     // ── Scroll Reveal ──
