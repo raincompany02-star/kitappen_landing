@@ -1119,8 +1119,9 @@
     // ── Автор биографиясын ашу/жабу ──
     function toggleBio(btn, e) {
       if (e) { e.stopPropagation(); e.stopImmediatePropagation(); }
+      const panel = btn.closest('.author-card').querySelector('.author-bio-panel');
       btn.classList.toggle('open');
-      btn.nextElementSibling.classList.toggle('open');
+      panel.classList.toggle('open');
       btn.querySelector('.bio-toggle-text').textContent =
         btn.classList.contains('open') ? 'Жасыру' : 'Толығырақ ақпарат';
     }
