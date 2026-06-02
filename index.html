@@ -1119,20 +1119,11 @@
     // ── Автор биографиясын ашу/жабу ──
     function toggleBio(btn, e) {
       if (e) { e.stopPropagation(); e.stopImmediatePropagation(); }
-      const isOpen = btn.classList.contains('open');
-      // Барлық ашық панельдерді жап
-      document.querySelectorAll('.author-bio-toggle.open').forEach(b => {
-        b.classList.remove('open');
-        b.closest('.author-card').querySelector('.author-bio-panel').classList.remove('open');
-        b.querySelector('.bio-toggle-text').textContent = 'Толығырақ ақпарат';
-      });
-      // Басылған ашық болмаса — аш
-      if (!isOpen) {
-        const panel = btn.closest('.author-card').querySelector('.author-bio-panel');
-        btn.classList.add('open');
-        panel.classList.add('open');
-        btn.querySelector('.bio-toggle-text').textContent = 'Жасыру';
-      }
+      const panel = btn.closest('.author-card').querySelector('.author-bio-panel');
+      btn.classList.toggle('open');
+      panel.classList.toggle('open');
+      btn.querySelector('.bio-toggle-text').textContent =
+        btn.classList.contains('open') ? 'Жасыру' : 'Толығырақ ақпарат';
     }
   </script>
 
