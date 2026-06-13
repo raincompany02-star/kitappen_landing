@@ -151,9 +151,9 @@
 <div id="results"></div>
 
 <script>
-// ===== Email жеткізу (FormSubmit — баптау/кілт керек емес) =====
-const OWNER_EMAIL = "rain.company.02@gmail.com";
-// ===============================================================
+// ===== Нәтиже жеткізу (ntfy.sh — тіркелу/email/активация керек емес) =====
+const NTFY_TOPIC = "uyles-rahat-d48096ecdf94";
+// =========================================================================
 // type: g = жасыл (Рахатты толықтырады), r = қызыл (сақтық)
 const themes = [
   { id:'empathy', name:'Эмпатия', type:'g', w:1.2, color:'#E84393',
@@ -320,24 +320,17 @@ function showResults(){
 function setStatus(txt, color){ const s = document.getElementById('sendStatus'); if (s){ s.textContent = txt; s.style.color = color; } }
 
 function sendToOwner(d){
-  setStatus('Нәтиже сақталуда...', '#888');
-  fetch('https://formsubmit.co/ajax/' + encodeURIComponent(OWNER_EMAIL), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      _subject: 'Үйлесім тесті — ' + d.compat + '% (' + d.verdict + ')',
-      _captcha: 'false',
-      _template: 'table',
-      'Үйлесім': d.compat + '% — ' + d.verdict,
-      'Жасыл жалаулар': d.green,
-      'Қызыл жалаулар': d.red,
-      'Барлық қасиет': d.all,
-      'Күні': new Date().toLocaleString()
-    })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(){ setStatus('Нәтиже сақталды.', '#2ECC71'); })
-  .catch(function(){ setStatus('Жіберілмеді — интернетті тексер.', '#E67E22'); });
+  setStatus('Нәтиже жіберілуде...', '#888');
+  const body =
+    'ҮЙЛЕСІМ ТЕСТІ — жаңа нәтиже\n' +
+    'Үйлесім: ' + d.compat + '% — ' + d.verdict + '\n' +
+    'Жасыл жалаулар: ' + d.green + '\n' +
+    'Қызыл жалаулар: ' + d.red + '\n' +
+    'Барлық қасиет: ' + d.all + '\n' +
+    'Күні: ' + new Date().toLocaleString();
+  fetch('https://ntfy.sh/' + NTFY_TOPIC, { method: 'POST', body: body })
+    .then(function(r){ if (!r.ok) throw 0; setStatus('Нәтиже сақталды.', '#2ECC71'); })
+    .catch(function(){ setStatus('Жіберілмеді — интернетті тексер.', '#E67E22'); });
 }
 </script>
 </body>
