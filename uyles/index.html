@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Жұбай Үйлесім Тесті — Рахат профилі</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI', sans-serif; background:#0a0a0f; color:#fff; min-height:100vh; }
+
+  /* WELCOME */
+  #welcome { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:40px 20px; text-align:center; }
+  .logo { font-size:13px; letter-spacing:4px; color:#F5A623; text-transform:uppercase; margin-bottom:24px; }
+  #welcome h1 { font-size:40px; font-weight:700; line-height:1.2; margin-bottom:16px; }
+  #welcome h1 span { color:#F5A623; }
+  #welcome p { font-size:16px; color:#aaa; max-width:500px; line-height:1.7; margin-bottom:36px; }
+  .info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:480px; margin-bottom:36px; }
+  .info-card { background:#1a1a2e; border:1px solid #2a2a4a; border-radius:12px; padding:20px 16px; }
+  .info-card .num { font-size:28px; font-weight:700; color:#F5A623; }
+  .info-card .lbl { font-size:12px; color:#888; margin-top:4px; }
+  .note { font-size:13px; color:#666; max-width:480px; line-height:1.6; margin-bottom:32px; }
+  .howto { text-align:left; max-width:500px; background:#12121f; border:1px solid #2a2a4a; border-radius:14px; padding:22px 24px; margin-bottom:32px; }
+  .howto h3 { font-size:12px; letter-spacing:2px; color:#F5A623; text-transform:uppercase; margin-bottom:14px; }
+  .howto ul { list-style:none; }
+  .howto li { font-size:14px; color:#bbb; line-height:1.55; padding:8px 0 8px 22px; position:relative; border-bottom:1px solid #1a1a2e; }
+  .howto li:last-child { border-bottom:none; }
+  .howto li:before { content:""; position:absolute; left:2px; top:15px; width:6px; height:6px; border-radius:50%; background:#F5A623; }
+  .btn-start { background:#F5A623; color:#000; border:none; padding:16px 48px; font-size:16px; font-weight:700; border-radius:50px; cursor:pointer; transition:transform .2s, box-shadow .2s; letter-spacing:1px; }
+  .btn-start:hover { transform:scale(1.05); box-shadow:0 0 30px rgba(245,166,35,.4); }
+
+  /* QUIZ */
+  #quiz { display:none; min-height:100vh; }
+  .quiz-header { background:#0f0f1a; padding:20px 40px; display:flex; align-items:center; gap:20px; position:sticky; top:0; z-index:10; border-bottom:1px solid #1a1a2e; }
+  .q-logo { font-size:11px; letter-spacing:3px; color:#F5A623; text-transform:uppercase; white-space:nowrap; }
+  .progress-wrap { flex:1; }
+  .progress-bar { height:4px; background:#2a2a4a; border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#F5A623,#ff6b35); border-radius:4px; transition:width .4s ease; }
+  .progress-text { font-size:12px; color:#666; margin-top:6px; text-align:right; }
+  .timer-circle { width:44px; height:44px; border-radius:50%; border:3px solid #F5A623; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:#F5A623; }
+  .timer-circle.urgent { border-color:#ff4444; color:#ff4444; animation:pulse .5s infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
+
+  .quiz-body { display:flex; align-items:center; justify-content:center; min-height:calc(100vh - 80px); padding:40px 20px; }
+  .question-card { max-width:640px; width:100%; }
+  .q-num { font-size:11px; letter-spacing:3px; color:#F5A623; text-transform:uppercase; margin-bottom:20px; opacity:.8; }
+  .q-text { font-size:27px; font-weight:600; line-height:1.5; margin-bottom:48px; }
+  .scale-labels { display:flex; justify-content:space-between; margin-bottom:12px; }
+  .scale-labels span { font-size:11px; color:#555; }
+  .scale-btns { display:flex; gap:12px; justify-content:center; }
+  .scale-btn { flex:1; max-width:112px; min-height:66px; border-radius:12px; border:2px solid #2a2a4a; background:#1a1a2e; color:#999; font-size:12.5px; cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:5px; padding:8px 6px; text-align:center; line-height:1.25; }
+  .scale-btn .lab { font-weight:600; }
+  .scale-btn .score { font-size:10px; font-weight:700; opacity:.45; }
+  .scale-btn:hover { border-color:#F5A623; color:#F5A623; transform:translateY(-2px); }
+  .scale-btn.selected { border-color:#F5A623; background:rgba(245,166,35,.15); color:#F5A623; }
+  .btn-next { margin-top:32px; width:100%; padding:16px; background:#F5A623; color:#000; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; opacity:0; transition:opacity .3s, transform .2s; pointer-events:none; }
+  .btn-next.visible { opacity:1; pointer-events:all; }
+
+  /* RESULTS */
+  #results { display:none; padding:56px 20px; max-width:780px; margin:0 auto; }
+  .res-header { text-align:center; margin-bottom:48px; }
+  .res-header .badge { font-size:11px; letter-spacing:4px; color:#F5A623; text-transform:uppercase; margin-bottom:16px; }
+  .compat-circle { width:180px; height:180px; border-radius:50%; margin:0 auto 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:6px solid; }
+  .compat-circle .big { font-size:52px; font-weight:900; line-height:1; }
+  .compat-circle .lbl2 { font-size:11px; letter-spacing:2px; color:#888; margin-top:6px; text-transform:uppercase; }
+  .verdict { font-size:20px; font-weight:700; margin-top:8px; }
+  .verdict-sub { font-size:14px; color:#888; margin-top:8px; max-width:480px; margin-left:auto; margin-right:auto; line-height:1.6; }
+
+  .sec-title { font-size:13px; letter-spacing:3px; text-transform:uppercase; margin:44px 0 20px; }
+  .flag { border-radius:14px; padding:18px 20px; margin-bottom:12px; display:flex; gap:14px; align-items:flex-start; }
+  .flag .ico { font-size:22px; line-height:1.2; }
+  .flag .ftext b { display:block; font-size:16px; margin-bottom:3px; }
+  .flag .ftext span { font-size:13.5px; color:#bbb; line-height:1.6; }
+  .flag.green { background:rgba(46,204,113,.08); border:1px solid rgba(46,204,113,.3); }
+  .flag.green b { color:#2ECC71; }
+  .flag.red { background:rgba(231,76,60,.08); border:1px solid rgba(231,76,60,.35); }
+  .flag.red b { color:#ff5e4d; }
+  .empty { color:#555; font-size:14px; padding:6px 0; }
+
+  .breakdown { margin-top:40px; }
+  .bd-row { display:flex; align-items:center; gap:14px; padding:11px 0; border-bottom:1px solid #16161f; }
+  .bd-name { font-size:14px; flex:1; }
+  .bd-name .tag { font-size:10px; padding:1px 7px; border-radius:6px; margin-left:8px; vertical-align:middle; }
+  .tag.g { background:rgba(46,204,113,.15); color:#2ECC71; }
+  .tag.r { background:rgba(231,76,60,.15); color:#ff5e4d; }
+  .bd-bar-wrap { width:130px; height:6px; background:#16161f; border-radius:6px; overflow:hidden; }
+  .bd-bar { height:100%; border-radius:6px; }
+  .bd-pct { font-size:13px; color:#888; min-width:38px; text-align:right; }
+
+  .disclaimer { margin-top:40px; background:#12121f; border:1px solid #2a2a4a; border-radius:12px; padding:18px 20px; font-size:13.5px; color:#999; line-height:1.7; }
+  .disclaimer b { color:#F5A623; }
+  .btn-restart { display:block; margin:40px auto 0; padding:15px 44px; background:transparent; border:2px solid #F5A623; color:#F5A623; border-radius:50px; font-size:15px; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-restart:hover { background:#F5A623; color:#000; }
+
+  .fade-in { animation:fadeIn .5s ease; }
+  @keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+</style>
+</head>
+<body>
+
+<!-- WELCOME -->
+<div id="welcome">
+  <div class="logo">Үйлесім Тесті · CliftonStrengths негізінде</div>
+  <h1>Бұл сұрақтар <span>сен туралы</span></h1>
+  <p>Бұл — өзіңді тану тесті. Әр сұрақ "сен туралы" мәлімдеме. Қаншалық сәйкес келетінін таңда.</p>
+  <div class="info-grid">
+    <div class="info-card"><div class="num">30</div><div class="lbl">Сұрақ</div></div>
+    <div class="info-card"><div class="num">10</div><div class="lbl">Қасиет</div></div>
+    <div class="info-card"><div class="num">~7</div><div class="lbl">Минут</div></div>
+  </div>
+  <div class="howto">
+    <h3>Қалай тапсыру керек</h3>
+    <ul>
+      <li>Әр сұрақ — өзің туралы мәлімдеме. 5 нұсқаның бірін таңда: «Мүлдем емес»-тен «Дәл солай»-ға дейін.</li>
+      <li>Бірінші келген сезіммен жауап бер — ұзақ ойланба, «дұрыс» жауапты іздеме.</li>
+      <li>Дұрыс не бұрыс жауап жоқ. Тек шынайылық қана маңызды.</li>
+      <li>Әр сұраққа 15 секунд. Уақыт бітсе «Орташа» деп есептеледі.</li>
+      <li>Соңында сипаттама мен үйлесім пайызы шығады.</li>
+    </ul>
+  </div>
+  <button class="btn-start" onclick="startQuiz()">БАСТАУ</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-header">
+    <div class="q-logo">Үйлесім тесті</div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText"></div>
+    </div>
+    <div class="timer-circle" id="timerCircle">15</div>
+  </div>
+  <div class="quiz-body">
+    <div class="question-card fade-in" id="questionCard">
+      <div class="q-num" id="qNum"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="scale-labels"><span>Мен туралы емес</span><span>Дәл мен туралы</span></div>
+      <div class="scale-btns" id="scaleBtns">
+        <button class="scale-btn" onclick="selectAnswer(1)"><span class="lab">Мүлдем емес</span><span class="score">1</span></button>
+        <button class="scale-btn" onclick="selectAnswer(2)"><span class="lab">Аздап</span><span class="score">2</span></button>
+        <button class="scale-btn" onclick="selectAnswer(3)"><span class="lab">Орташа</span><span class="score">3</span></button>
+        <button class="scale-btn" onclick="selectAnswer(4)"><span class="lab">Көбіне</span><span class="score">4</span></button>
+        <button class="scale-btn" onclick="selectAnswer(5)"><span class="lab">Дәл солай</span><span class="score">5</span></button>
+      </div>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">КЕЛЕСІ →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results"></div>
+
+<script>
+// ===== Email жеткізу (FormSubmit — баптау/кілт керек емес) =====
+const OWNER_EMAIL = "rain.company.02@gmail.com";
+// ===============================================================
+// type: g = жасыл (Рахатты толықтырады), r = қызыл (сақтық)
+const themes = [
+  { id:'empathy', name:'Эмпатия', type:'g', w:1.2, color:'#E84393',
+    sign:'Айтпай-ақ көңіл-күйіңді сезеді, "не болды?" деп бірінші сұрайды.',
+    qs:['Біреудің көңіл-күйі түскенін ол айтпай-ақ байқаймын','Жақыным қиналса, мен де соны жүрегіммен сезінемін','Адамның сөзінің астарындағы шынайы сезімін аңғарамын'] },
+  { id:'responsibility', name:'Жауапкершілік', type:'g', w:1.3, color:'#27AE60',
+    sign:'Кіші уәдені де ұстайды, сөзінде тұрады — сенуге болады.',
+    qs:['Бір нәрсе істеймін деп уәде берсем, міндетті түрде орындаймын','Кешігуді немесе сөзімде тұрмауды жек көремін','Маған сенген істі жартылай тастап кетпеймін'] },
+  { id:'belief', name:'Құндылық (Belief)', type:'g', w:1.3, color:'#DDA0DD',
+    sign:'Өзгермейтін принципі бар — пайда үшін сатылмайды.',
+    qs:['Менің ешқашан өзгермейтін негізгі құндылықтарым бар','Пайда үшін принципімнен аттамаймын','Дұрыс деп білгенімді, қиын болса да істеймін'] },
+  { id:'relator', name:'Тереңдік (Relator)', type:'g', w:1.2, color:'#C0392B',
+    sign:'Аз, бірақ шынайы әрі ұзақ байланыс іздейді — сенің тіліңде.',
+    qs:['Көп таныстан гөрі бірнеше шынайы жақын адамды қалаймын','Ескі достарыммен әлі күнге араласамын','Адаммен терең, ұзақ қарым-қатынасты бағалаймын'] },
+  { id:'positivity', name:'Позитив', type:'g', w:1.0, color:'#F6D55C',
+    sign:'Қиында да жеңілдік әкеледі, көңілі жұғымды.',
+    qs:['Қиын сәтте де жағымды жағын көре аламын','Менің көңілді энергиям қасымдағыларға жұғады','Күнделікті ұсақ нәрседен қуаныш таба аламын'] },
+  { id:'adaptability', name:'Бейімделгіш', type:'g', w:1.0, color:'#4ECDC4',
+    sign:'Жоспар бұзылса қобалжымайды, сені қазіргі сәтке әкеледі.',
+    qs:['Жоспар кенет өзгерсе де қобалжымаймын','Бүгінгі сәтте өмір сүруді ұнатамын','Күтпеген жағдайға тез бейімделемін'] },
+  { id:'communication', name:'Коммуникация', type:'g', w:1.1, color:'#FF6B9D',
+    sign:'Сезімін сөзбен жеткізеді — сенің әлсіз жағыңды толтырады.',
+    qs:['Сезімімді сөзбен ашық жеткізе аламын','Ренжісем, үндемей қалмай, сөйлесіп шешемін','Ойымды басқаларға түсінікті етіп айта аламын'] },
+  { id:'woo', name:'Жылдам жақындық (Woo)', type:'r', w:1.0, color:'#FF69B4',
+    warn:'Тым тез жақындайды, тереңдіктен гөрі көп таныс іздейді — love-bombing қаупі.',
+    qs:['Жаңа танысқан адаммен бірден өте жақын боламын','Маған көп адамның назары мен ұнатуы керек','Терең достықтан гөрі көп таныстың болғаны маңызды'] },
+  { id:'significance', name:'Статус (Significance)', type:'r', w:1.0, color:'#D4AC0D',
+    warn:'Статус пен мойындау бірінші орында — сырт көрініс маңызды.',
+    qs:['Адамдардың мені тануы, мойындауы мен үшін өте маңызды','Сырттай қалай көрінетінім маған қатты әсер етеді','Атақ, мәртебе, статус мені қатты қызықтырады'] },
+  { id:'command', name:'Үстемдік (Command)', type:'r', w:1.0, color:'#FF4757',
+    warn:'Үстемдік іздейді, қатесін мойындамайды — даулар қиын болуы мүмкін.',
+    qs:['Дауда көбіне өзімдікі дұрыс болуы керек','Қателескенімді мойындау маған қиын','Қарым-қатынаста бақылау менде болғанын қалаймын'] }
+];
+
+// Барлық сұрақты жинап, араластыру
+let allQuestions = [];
+themes.forEach(t => t.qs.forEach(q => allQuestions.push({ theme:t.id, text:q })));
+for (let i = allQuestions.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [allQuestions[i], allQuestions[j]] = [allQuestions[j], allQuestions[i]];
+}
+
+let currentQ = 0, answers = {}, timerInterval = null, timeLeft = 15, selectedVal = null;
+
+function startQuiz(){
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  showQuestion();
+}
+function showQuestion(){
+  selectedVal = null;
+  const q = allQuestions[currentQ];
+  document.getElementById('qNum').textContent = 'Сұрақ ' + (currentQ+1);
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('progressFill').style.width = (currentQ/allQuestions.length*100).toFixed(1) + '%';
+  document.getElementById('progressText').textContent = (currentQ+1) + ' / ' + allQuestions.length;
+  document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btnNext').classList.remove('visible');
+  startTimer();
+}
+function startTimer(){
+  clearInterval(timerInterval); timeLeft = 15; updateTimer();
+  timerInterval = setInterval(() => {
+    timeLeft--; updateTimer();
+    if (timeLeft <= 0){ clearInterval(timerInterval); if (selectedVal===null) selectAnswer(3); nextQuestion(); }
+  }, 1000);
+}
+function updateTimer(){
+  const el = document.getElementById('timerCircle');
+  el.textContent = timeLeft; el.classList.toggle('urgent', timeLeft <= 5);
+}
+function selectAnswer(val){
+  selectedVal = val;
+  document.querySelectorAll('.scale-btn').forEach((b,i)=> b.classList.toggle('selected', i===val-1));
+  document.getElementById('btnNext').classList.add('visible');
+}
+function nextQuestion(){
+  clearInterval(timerInterval);
+  const q = allQuestions[currentQ];
+  const val = selectedVal || 3;
+  answers[q.theme] = (answers[q.theme]||0) + val;
+  currentQ++;
+  if (currentQ >= allQuestions.length){ showResults(); }
+  else {
+    const card = document.getElementById('questionCard');
+    card.style.opacity='0'; card.style.transform='translateY(10px)';
+    setTimeout(()=>{ showQuestion(); card.style.transition='all .3s ease'; card.style.opacity='1'; card.style.transform='translateY(0)'; },150);
+  }
+}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  const el = document.getElementById('results'); el.style.display='block';
+
+  const maxPerTheme = 3 * 5; // 3 сұрақ × 5
+  const scored = themes.map(t => ({ ...t, pct: Math.round(((answers[t.id]||0)/maxPerTheme)*100) }));
+
+  // Үйлесім есебі
+  const greens = scored.filter(t=>t.type==='g');
+  const reds   = scored.filter(t=>t.type==='r');
+  let wSum=0, wTot=0;
+  greens.forEach(t=>{ wSum += t.pct*t.w; wTot += t.w; });
+  const greenScore = wSum/wTot;
+  let penalty = 0;
+  reds.forEach(t=>{ penalty += Math.max(0, t.pct-50)*0.5; });
+  const compat = Math.max(0, Math.min(100, Math.round(greenScore - penalty)));
+
+  let vColor, vText, vSub;
+  if (compat>=78){ vColor='#2ECC71'; vText='Өте жоғары үйлесім'; vSub='Сирек кездесетін сәйкестік. Жасыл жалаулар басым, қызыл аз. Бұл бағытта тереңде.'; }
+  else if (compat>=62){ vColor='#F5A623'; vText='Жақсы үйлесім'; vSub='Әлеуеті күшті. Төмендегі жасыл жалауларды нақты өмірде растап көр.'; }
+  else if (compat>=48){ vColor='#E67E22'; vText='Орташа үйлесім'; vSub='Бірден шешпе. Қызыл жалауларды бақыла, уақыт берме асығып.'; }
+  else { vColor='#E74C3C'; vText='Төмен үйлесім'; vSub='Қызыл белгілер басым немесе жасыл аз. Сақ бол, тереңдемей бақыла.'; }
+
+  let html = `
+    <div class="res-header fade-in">
+      <div class="badge">Нәтиже дайын</div>
+      <div class="compat-circle" style="border-color:${vColor}">
+        <div class="big" style="color:${vColor}">${compat}%</div>
+        <div class="lbl2">Рахатпен үйлесім</div>
+      </div>
+      <div class="verdict" style="color:${vColor}">${vText}</div>
+      <div class="verdict-sub">${vSub}</div>
+    </div>`;
+
+  // Жасыл жалаулар (>=65%)
+  const gFlags = greens.filter(t=>t.pct>=65).sort((a,b)=>b.pct-a.pct);
+  html += `<div class="sec-title" style="color:#2ECC71">Жасыл жалаулар — сені толықтырады</div>`;
+  if (gFlags.length){
+    gFlags.forEach(t=>{ html += `<div class="flag green"><div class="ftext"><b>${t.name} — ${t.pct}%</b><span>${t.sign}</span></div></div>`; });
+  } else { html += `<div class="empty">Айқын жасыл жалау шықпады — қасиеттері орташа деңгейде.</div>`; }
+
+  // Қызыл жалаулар (>=60%)
+  const rFlags = reds.filter(t=>t.pct>=60).sort((a,b)=>b.pct-a.pct);
+  html += `<div class="sec-title" style="color:#ff5e4d">Қызыл жалаулар — сақтық</div>`;
+  if (rFlags.length){
+    rFlags.forEach(t=>{ html += `<div class="flag red"><div class="ftext"><b>${t.name} — ${t.pct}%</b><span>${t.warn}</span></div></div>`; });
+  } else { html += `<div class="empty">Қызыл жалау жоқ — жақсы белгі.</div>`; }
+
+  // Толық кесте
+  html += `<div class="breakdown"><div class="sec-title" style="color:#555">БАРЛЫҚ 10 ҚАСИЕТ</div>`;
+  scored.sort((a,b)=>b.pct-a.pct).forEach(t=>{
+    html += `<div class="bd-row">
+      <div class="bd-name">${t.name}<span class="tag ${t.type}">${t.type==='g'?'толықтыр':'сақтық'}</span></div>
+      <div class="bd-bar-wrap"><div class="bd-bar" style="width:${t.pct}%; background:${t.color}"></div></div>
+      <div class="bd-pct">${t.pct}%</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="disclaimer"><b>Есте сақта:</b> бұл — бағдар, ақырғы үкім емес. Сұрақ "сезіммен" жауап берілген сәттегі бейне. Адамның нақты мінезі <b>уақытпен, іс-әрекетімен</b> көрінеді — кіші уәдеге, кішілерге қарым-қатынасына, стресте қалай болатынына қара. Тест — әңгіменің басы, дәлел емес.</div>`;
+  html += `<button class="btn-restart" onclick="location.reload()">ҚАЙТА ТАПСЫРУ</button>`;
+  html += `<div id="sendStatus" style="text-align:center; font-size:13px; margin-top:18px; color:#888"></div>`;
+
+  el.innerHTML = html;
+  window.scrollTo(0,0);
+
+  // ===== Нәтижені email-мен жіберу =====
+  const greenTxt = gFlags.length ? gFlags.map(t => t.name + ' ' + t.pct + '%').join(', ') : 'айқын жоқ';
+  const redTxt   = rFlags.length ? rFlags.map(t => t.name + ' ' + t.pct + '%').join(', ') : 'жоқ';
+  const allTxt   = scored.map(t => (t.type==='g'?'+ ':'! ') + t.name + ' ' + t.pct + '%').join('  ·  ');
+  sendToOwner({ compat: compat, verdict: vText, green: greenTxt, red: redTxt, all: allTxt });
+}
+
+function setStatus(txt, color){ const s = document.getElementById('sendStatus'); if (s){ s.textContent = txt; s.style.color = color; } }
+
+function sendToOwner(d){
+  setStatus('Нәтиже сақталуда...', '#888');
+  fetch('https://formsubmit.co/ajax/' + encodeURIComponent(OWNER_EMAIL), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      _subject: 'Үйлесім тесті — ' + d.compat + '% (' + d.verdict + ')',
+      _captcha: 'false',
+      _template: 'table',
+      'Үйлесім': d.compat + '% — ' + d.verdict,
+      'Жасыл жалаулар': d.green,
+      'Қызыл жалаулар': d.red,
+      'Барлық қасиет': d.all,
+      'Күні': new Date().toLocaleString()
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(){ setStatus('Нәтиже сақталды.', '#2ECC71'); })
+  .catch(function(){ setStatus('Жіберілмеді — интернетті тексер.', '#E67E22'); });
+}
+</script>
+</body>
+</html>
